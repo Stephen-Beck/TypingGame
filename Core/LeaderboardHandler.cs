@@ -22,6 +22,10 @@ namespace TypingGame.Core
 
         public List<LeaderboardEntry> LoadFromJSON()
         {
+            // if folder does not exist, create it
+            string folderPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath); 
+            
             // if file does not exist or is empty, create/save file
             // if Leaderboard contains no entries, it will populate the .json with just the header, which is fine
             if (!File.Exists(filePath)) SaveToJSON();
