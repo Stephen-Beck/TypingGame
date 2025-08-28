@@ -1,0 +1,100 @@
+Structs are value types.
+Classes are reference types.
+System.Collections.Generic
+camelCase
+PascalCase
+ternary operator
+access modifier
+using directive
+Hello, World!
+if (a == b)
+if (value != null)
+for (int i = 0; i < 10; i++)
+while (count > 0)
+break;
+continue;
+return true;
+goto Label:
+throw new Exception("An error has occurred!");
+var array = new int[4];
+public partial class MainForm : Form
+MainForm form = new MainForm();
+static void Main(string[] args)
+public void DisplayScore(int score)
+Console.ReadLine();
+Console.ReadKey();
+Console.Clear();
+string message = $"Welcome, {username}!";
+public class GameController
+public GameController(GameConfig config)
+public void InitializeRun()
+public HUD GetHUD()
+TotalErrors += phraseErrors;
+TotalChars += CurrentWord.Length;
+SubmissionCount++;
+return input == CurrentWord;
+wordLabels[4] = phraseHandler.Next();
+IsPaused = true;
+gameTimer.Start();
+gameTimer.Stop();
+public GameSummary EndRun()
+IReadOnlyCollection<string>
+return wordLabels.AsReadOnly();
+AppDomain.CurrentDomain.BaseDirectory
+Path.Combine
+String.IsNullOrWhiteSpace(json)
+List<LeaderboardEntry>
+JsonSerializer.Serialize<>
+JsonSerializer.Deserialize<>
+json = File.ReadAllText(filePath);
+return Leaderboard.Entries;
+Leaderboard.Entries.Add(entry);
+.OrderByDescending(e => e.FinalNetWPM)
+.ThenByDescending(e => e.FinalAccuracy)
+var opt = new JsonSerializerOptions
+File.WriteAllText(tempPath, json);
+File.Move(tempPath, filePath);
+return compare[input.Length, phrase.Length];
+Queue<string> PhraseQueue
+using (StreamReader reader = new(filePath))
+while ((line = reader.ReadLine()) != null
+phrases.Add(line);
+MessageBox.Show()
+PhraseQueue = new Queue<string>(phrases);
+return PhraseQueue.Dequeue();
+if (IsEmpty()) Load();
+LoadUserControl(control);
+gameController.InitializeRun();
+control.Dock = DockStyle.Fill;
+Dynamic Link Library
+Stack: Last In, First Out
+Queue: First In, First Out
+Jagged Array
+Array
+Tree
+Graph
+Recursion
+Abstract Data Types
+strings are immutable
+Big O notation
+#region MyRegion
+ref int number
+out var result
+async Task DoWorkAsync();
+foreach (var item in items)
+Math.Sqrt(16)
+Random random = new();
+DateTime.Now
+=> lambda expression
+Sealed classes cannot be inherited
+An Enum is a named set of constants
+Delegates are type-safe function pointers
+Nullable types allow value types to be null
+Virtual methods can be overridden
+A value type is usually stored on the stack
+A value type holds data directly
+A reference type stores a reference to the data
+A reference type is usually stored on the heap
+A get accessor returns the value of a property
+A set accessor assigns a value to a property
+Abstract classes cannot be instantiated
