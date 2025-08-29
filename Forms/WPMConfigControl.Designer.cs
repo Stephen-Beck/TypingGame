@@ -34,6 +34,7 @@
             label1 = new Label();
             checkboxBlindMode = new CheckBox();
             toolTipBlindMode = new ToolTip(components);
+            label8 = new Label();
             btnStart = new Button();
             label2 = new Label();
             txtPlayerName = new TextBox();
@@ -42,7 +43,6 @@
             label5 = new Label();
             label6 = new Label();
             label7 = new Label();
-            label8 = new Label();
             SuspendLayout();
             // 
             // CategoryDropDown
@@ -69,13 +69,25 @@
             // 
             checkboxBlindMode.AutoSize = true;
             checkboxBlindMode.Font = new Font("Segoe UI", 14F);
-            checkboxBlindMode.Location = new Point(174, 559);
+            checkboxBlindMode.Location = new Point(151, 560);
             checkboxBlindMode.Name = "checkboxBlindMode";
-            checkboxBlindMode.Size = new Size(154, 29);
+            checkboxBlindMode.Size = new Size(203, 29);
             checkboxBlindMode.TabIndex = 2;
-            checkboxBlindMode.Text = "Blind Mode [?]";
-            toolTipBlindMode.SetToolTip(checkboxBlindMode, "Blind Mode hides all typed characters, preventing players from visually confirming their input.");
+            checkboxBlindMode.Text = "Blind Input Mode [?]";
+            toolTipBlindMode.SetToolTip(checkboxBlindMode, "Blind Input Mode hides all typed characters, preventing players from visually confirming their input.");
             checkboxBlindMode.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            label8.Font = new Font("Segoe UI", 13F);
+            label8.Location = new Point(412, 302);
+            label8.Margin = new Padding(0);
+            label8.Name = "label8";
+            label8.Size = new Size(29, 29);
+            label8.TabIndex = 10;
+            label8.Text = "ⓘ";
+            label8.TextAlign = ContentAlignment.MiddleLeft;
+            toolTipBlindMode.SetToolTip(label8, "WPM includes the [Enter] key used to submit each phrase.");
             // 
             // btnStart
             // 
@@ -154,18 +166,6 @@
             label7.Size = new Size(248, 45);
             label7.TabIndex = 9;
             label7.Text = "WPM Calculator";
-            // 
-            // label8
-            // 
-            label8.Font = new Font("Segoe UI", 13F);
-            label8.Location = new Point(412, 302);
-            label8.Margin = new Padding(0);
-            label8.Name = "label8";
-            label8.Size = new Size(29, 29);
-            label8.TabIndex = 10;
-            label8.Text = "ⓘ";
-            label8.TextAlign = ContentAlignment.MiddleLeft;
-            toolTipBlindMode.SetToolTip(label8, "WPM includes the [Enter] key used to submit each phrase.");
             // 
             // WPMConfigControl
             // 

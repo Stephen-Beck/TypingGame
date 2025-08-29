@@ -120,14 +120,11 @@
   <metadata name="toolTipBlindMode.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTipBlindMode.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="label3.Text" xml:space="preserve">
     <value>Instructions:
 • Enter your name.
 • Choose a category. This determines the type of phrases that will appear during the game.
-• Choose whether to enable Blind Mode:
+• Choose whether to enable Blind Input Mode:
     • All typed input will be masked with • characters.
     • For example, "input" would show up as "•••••"
     • This increases difficulty by hiding any typing errors as you go.

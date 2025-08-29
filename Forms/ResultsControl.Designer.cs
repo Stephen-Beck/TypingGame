@@ -55,6 +55,11 @@
             lblAccuracy = new Label();
             lblNetWPM = new Label();
             dgvLeaderboard = new DataGridView();
+            playerNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            finalNetWPMDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            finalAccuracyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            finalGrossWPMDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            timestampDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             entriesBindingSource = new BindingSource(components);
             leaderboardBindingSource = new BindingSource(components);
             btnSaveToLeaderboard = new Button();
@@ -64,11 +69,6 @@
             lblLeaderboardType = new Label();
             label11 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            playerNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            finalNetWPMDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            finalAccuracyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            finalGrossWPMDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            timestampDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dgvLeaderboard).BeginInit();
             ((System.ComponentModel.ISupportInitialize)entriesBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)leaderboardBindingSource).BeginInit();
@@ -102,11 +102,11 @@
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(69, 56);
+            label3.Location = new Point(29, 56);
             label3.Name = "label3";
-            label3.Size = new Size(92, 21);
+            label3.Size = new Size(132, 21);
             label3.TabIndex = 2;
-            label3.Text = "Blind Mode:";
+            label3.Text = "Blind Input Mode:";
             // 
             // label4
             // 
@@ -315,6 +315,63 @@
             dgvLeaderboard.TabIndex = 20;
             dgvLeaderboard.TabStop = false;
             // 
+            // playerNameDataGridViewTextBoxColumn
+            // 
+            playerNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            playerNameDataGridViewTextBoxColumn.DataPropertyName = "PlayerName";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            playerNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            playerNameDataGridViewTextBoxColumn.HeaderText = "Player Name";
+            playerNameDataGridViewTextBoxColumn.Name = "playerNameDataGridViewTextBoxColumn";
+            playerNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // finalNetWPMDataGridViewTextBoxColumn
+            // 
+            finalNetWPMDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            finalNetWPMDataGridViewTextBoxColumn.DataPropertyName = "FinalNetWPM";
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            finalNetWPMDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            finalNetWPMDataGridViewTextBoxColumn.HeaderText = "Net WPM";
+            finalNetWPMDataGridViewTextBoxColumn.Name = "finalNetWPMDataGridViewTextBoxColumn";
+            finalNetWPMDataGridViewTextBoxColumn.ReadOnly = true;
+            finalNetWPMDataGridViewTextBoxColumn.Width = 83;
+            // 
+            // finalAccuracyDataGridViewTextBoxColumn
+            // 
+            finalAccuracyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            finalAccuracyDataGridViewTextBoxColumn.DataPropertyName = "FinalAccuracy";
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.Format = "P1";
+            finalAccuracyDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle3;
+            finalAccuracyDataGridViewTextBoxColumn.HeaderText = "Accuracy";
+            finalAccuracyDataGridViewTextBoxColumn.Name = "finalAccuracyDataGridViewTextBoxColumn";
+            finalAccuracyDataGridViewTextBoxColumn.ReadOnly = true;
+            finalAccuracyDataGridViewTextBoxColumn.Width = 81;
+            // 
+            // finalGrossWPMDataGridViewTextBoxColumn
+            // 
+            finalGrossWPMDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            finalGrossWPMDataGridViewTextBoxColumn.DataPropertyName = "FinalGrossWPM";
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            finalGrossWPMDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle4;
+            finalGrossWPMDataGridViewTextBoxColumn.HeaderText = "Gross WPM";
+            finalGrossWPMDataGridViewTextBoxColumn.Name = "finalGrossWPMDataGridViewTextBoxColumn";
+            finalGrossWPMDataGridViewTextBoxColumn.ReadOnly = true;
+            finalGrossWPMDataGridViewTextBoxColumn.Width = 93;
+            // 
+            // timestampDataGridViewTextBoxColumn
+            // 
+            timestampDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            timestampDataGridViewTextBoxColumn.DataPropertyName = "Timestamp";
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Format = "G";
+            dataGridViewCellStyle5.NullValue = null;
+            timestampDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle5;
+            timestampDataGridViewTextBoxColumn.HeaderText = "Timestamp";
+            timestampDataGridViewTextBoxColumn.Name = "timestampDataGridViewTextBoxColumn";
+            timestampDataGridViewTextBoxColumn.ReadOnly = true;
+            timestampDataGridViewTextBoxColumn.Width = 92;
+            // 
             // entriesBindingSource
             // 
             entriesBindingSource.DataMember = "Entries";
@@ -429,63 +486,6 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.Size = new Size(328, 283);
             tableLayoutPanel1.TabIndex = 27;
-            // 
-            // playerNameDataGridViewTextBoxColumn
-            // 
-            playerNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            playerNameDataGridViewTextBoxColumn.DataPropertyName = "PlayerName";
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            playerNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
-            playerNameDataGridViewTextBoxColumn.HeaderText = "Player Name";
-            playerNameDataGridViewTextBoxColumn.Name = "playerNameDataGridViewTextBoxColumn";
-            playerNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // finalNetWPMDataGridViewTextBoxColumn
-            // 
-            finalNetWPMDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            finalNetWPMDataGridViewTextBoxColumn.DataPropertyName = "FinalNetWPM";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            finalNetWPMDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            finalNetWPMDataGridViewTextBoxColumn.HeaderText = "Net WPM";
-            finalNetWPMDataGridViewTextBoxColumn.Name = "finalNetWPMDataGridViewTextBoxColumn";
-            finalNetWPMDataGridViewTextBoxColumn.ReadOnly = true;
-            finalNetWPMDataGridViewTextBoxColumn.Width = 83;
-            // 
-            // finalAccuracyDataGridViewTextBoxColumn
-            // 
-            finalAccuracyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            finalAccuracyDataGridViewTextBoxColumn.DataPropertyName = "FinalAccuracy";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.Format = "P1";
-            finalAccuracyDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle3;
-            finalAccuracyDataGridViewTextBoxColumn.HeaderText = "Accuracy";
-            finalAccuracyDataGridViewTextBoxColumn.Name = "finalAccuracyDataGridViewTextBoxColumn";
-            finalAccuracyDataGridViewTextBoxColumn.ReadOnly = true;
-            finalAccuracyDataGridViewTextBoxColumn.Width = 81;
-            // 
-            // finalGrossWPMDataGridViewTextBoxColumn
-            // 
-            finalGrossWPMDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            finalGrossWPMDataGridViewTextBoxColumn.DataPropertyName = "FinalGrossWPM";
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            finalGrossWPMDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle4;
-            finalGrossWPMDataGridViewTextBoxColumn.HeaderText = "Gross WPM";
-            finalGrossWPMDataGridViewTextBoxColumn.Name = "finalGrossWPMDataGridViewTextBoxColumn";
-            finalGrossWPMDataGridViewTextBoxColumn.ReadOnly = true;
-            finalGrossWPMDataGridViewTextBoxColumn.Width = 93;
-            // 
-            // timestampDataGridViewTextBoxColumn
-            // 
-            timestampDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            timestampDataGridViewTextBoxColumn.DataPropertyName = "Timestamp";
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "G";
-            dataGridViewCellStyle5.NullValue = null;
-            timestampDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle5;
-            timestampDataGridViewTextBoxColumn.HeaderText = "Timestamp";
-            timestampDataGridViewTextBoxColumn.Name = "timestampDataGridViewTextBoxColumn";
-            timestampDataGridViewTextBoxColumn.ReadOnly = true;
-            timestampDataGridViewTextBoxColumn.Width = 92;
             // 
             // ResultsControl
             // 

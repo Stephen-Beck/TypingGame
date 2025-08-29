@@ -17,7 +17,7 @@ namespace TypingGame.Forms
             LastConfig = config;
             leaderboardHandler = new(summary);
             DisplaySummary();
-            lblLeaderboardType.Text = $"(Category: {summary.Category}, Blind Mode: {(summary.BlindMode ? "Enabled" : "Disabled")})";
+            lblLeaderboardType.Text = $"(Category: {summary.Category}, Blind Input Mode: {(summary.BlindMode ? "Enabled" : "Disabled")})";
             dgvLeaderboard.CellFormatting += dgvLeaderboard_CellFormatting;
             BindDataGridView();
         }
