@@ -16,6 +16,12 @@
 # Mono auto generated files
 mono_crash.*
 
+# Legacy WinForms build files
+legacy-winforms/**/bin/
+legacy-winforms/**/obj/
+legacy-winforms/**/.vs/
+legacy-winforms/**/packages/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
