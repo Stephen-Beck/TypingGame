@@ -1,0 +1,70 @@
+﻿@page "/test"
+
+@using TypingGame.Core.Engine
+
+@inject HttpClient Http
+@inject IGameEngine Engine
+
+<PageTitle>Home</PageTitle>
+
+@* <label class="sp-inline">
+    <span>Category:</span>
+    <select class="sp-select" @bind="selectedCategory">
+        @foreach (var category in Enum.GetValues<Category>()) {
+            <option value="@category">@category.GetDescription()</option>
+        }
+    </select>
+</label>
+
+<button class="btn btn-primary" @onclick="LoadPhrases">Load Phrases</button>
+
+<div style="display: flex;">
+    <div>
+    @if (phrases.Count > 0)
+    {
+        @foreach (var phrase in phrases)
+        {
+            <p>@phrase</p>
+        }
+    }
+    </div>
+    <div>
+        @if (phrasesShuffled.Count > 0 && phrasesShuffled != null) {
+            @foreach (var phrase in phrasesShuffled) {
+                <p>@phrase</p>
+            }
+        }
+    </div>
+</div> *@
+
+@code {
+    // private bool IsChecked { get; set; } = false;
+    // private List<string> phrases = new();
+    // private IReadOnlyList<string> phrasesShuffled = Array.Empty<string>();
+    // private string selectedCategory = string.Empty;
+
+    // private async Task LoadPhrases()
+    // {
+    //     try
+    //     {
+    //         using (var reader = new StreamReader(await Http.GetStreamAsync($"phrases/Phrases_{selectedCategory}.txt")))
+    //         {
+    //             phrases = new();
+    //             string? line;
+
+    //             while ((line = await reader.ReadLineAsync()) != null)
+    //             {
+    //                 If current line is not empty or white-space, add Line (.Trim to remove leading/trailing white-space) to list
+    //                 if (!string.IsNullOrWhiteSpace(line)) phrases.Add(line.Trim());
+    //             }
+    //         }
+
+    //         phrasesShuffled = Engine.InitializeGame(phrases);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         phrases = new();
+    //         phrases.Add($"Error loading phrases: {ex.Message}");
+    //     }        
+    // }
+}

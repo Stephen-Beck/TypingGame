@@ -1,0 +1,471 @@
+﻿@page "/"
+@implements IDisposable
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject IGameEngine Engine
+
+<div class="config-setup">
+    @* Uncomment and remove <label> below after masked input is added
+    <label>
+        <input type="checkbox" @bind="isBlindInputMode" disabled="@isConfigDisabled"/>
+        <span>Blind Input Mode <span title="Blind Input Mode masks all user input as *">[?]</span></span>
+    </label>*@
+
+    <label>
+        <span title="Feature coming soon!">
+            <input type="checkbox" @bind="isBlindInputMode" disabled="true" />
+        Blind Input Mode <span>[?]</span></span>
+    </label>
+
+    <label>
+        <span>Category:</span>
+        <select @bind="selectedCategory" disabled="@isConfigDisabled">
+            <option value="busted">Break me</option>
+            @foreach (var category in Enum.GetValues<Category>()) {
+                <option value="@category">@category.GetDescription()</option>
+            }
+        </select>
+    </label>
+
+    <button @onclick="StartGameButtonClick" disabled="@isConfigDisabled">Start Game</button>
+</div>
+
+@if (IsOverlayVisible)
+{
+    <div class="overlay">
+        <div class="overlay-content">
+            <h4>Game Results!</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="table-header">Category:</td>
+                        <td class="table-body">@results.Config.Category</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Blind Input Mode:</td>
+                        <td class="table-body">@(results.Config.BlindInputMode ? "Enabled" : "Disabled")</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Game Duration:</td>
+                        <td class="table-body">@results.Config.GameDurationSeconds</td>
+                    </tr>
+                    <tr>
+                        <!-- Divider -->
+                        <td colspan="2">
+                            <hr />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Gross WPM:</td>
+                        <td class="table-body">@results.FinalGrossWPM.ToString("N0")</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Net WPM:</td>
+                        <td class="table-body">@results.FinalNetWPM.ToString("N0")</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Accuracy:</td>
+                        <td class="table-body">@results.FinalAccuracy.ToString("P0")</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Total Errors:</td>
+                        <td class="table-body">@results.Stats.TotalErrors</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Total Characters:</td>
+                        <td class="table-body">@results.Stats.TotalChars</td>
+                    </tr>
+                    <tr>
+                        <td class="table-header">Total Submissions:</td>
+                        <td class="table-body">@results.Stats.TotalSubmissions</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button @onclick="RefreshPage">Play Again</button>
+        </div>
+    </div>
+}
+
+<style>
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .overlay-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 90%;
+        width: auto;
+        text-align: center;
+        box-shadow: 2px 2px 5px black;
+    }
+
+    .table {
+        border-collapse: collapse;
+    }
+
+    .table td {
+        border: none;
+    }
+
+    .table-header {
+        font-weight: bold;
+        text-align: right;
+        column-width: auto;
+    }
+
+    .table-body {
+        text-align: left;
+    }
+</style>
+
+@code {
+    private bool IsOverlayVisible;
+
+    private void ShowOverlay() => IsOverlayVisible = true;
+    private void RefreshPage()
+    {
+        // Force a page refresh to reset everything
+        // Easiest way to get a new instance of IGameEngine
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
+    } 
+}
+
+<hr class="divider" />
+
+<div class="hud">
+    <div class="hud-section">
+        <label class="hud-header">Time Remaining</label>
+        <label class="hud-body">@timeRemaining.ToString("N1")</label>
+    </div>
+    <div class="hud-section">
+        <label class="hud-header">WPM</label>
+        <label class="hud-body">@hud.GrossWPM.ToString("N0")</label>
+    </div>
+    <div class="hud-section">
+        <label class="hud-header">Accuracy</label>
+        <label class="hud-body">@hud.AccuracyPercent.ToString("P0")</label>
+    </div>
+</div>
+
+<hr class="divider" />
+
+<div class="game">
+    <div class="phrase-container">
+        <p class="phrase-label label1">@hud.NextPhrases[4]</p>
+        <p class="phrase-label label2">@hud.NextPhrases[3]</p>
+        <p class="phrase-label label3">@hud.NextPhrases[2]</p>
+        <p class="phrase-label label4">@hud.NextPhrases[1]</p>
+        <p class="phrase-label label5">@hud.NextPhrases[0]</p>
+    </div>
+
+    <input class=@($"{textboxCssClass} {(isBlindInputMode ? "mask-text" : "")}") 
+        @ref="textboxRef" 
+        @bind-value="userInput"
+        @bind-value:event="oninput"
+        @onkeydown="OnKeyDownEvent"
+        @onblur="PauseTimer"
+        disabled="@isTextBoxDisabled"
+        autocomplete="off"/>
+
+    <!-- Reformat this later on -->
+    <div class="hud-section">
+        <p>The game will pause whenever the text box loses focus or the 'Escape' key is pressed.</p>
+        <p>The game will start/resume once the player starts typing in the text box.</p>
+    </div>
+</div>
+
+@if (errorMessage != null)
+{
+    <div class="overlay">
+        <div class="overlay-content">
+            <pre>@errorMessage</pre>
+            <button @onclick="RefreshPage">OK</button>
+        </div>
+    </div>
+}
+
+@code {
+    bool isBlindInputMode = false;
+    bool isTextBoxDisabled = true;
+    bool isConfigDisabled = false;
+    bool? isSubmissionCorrect = null;
+    int gameDurationInSeconds = 60;
+    string? errorMessage;
+    string textboxCssClass = "textbox";
+    string userInput;
+    GameConfig? config = null;
+    GameUpdateDTO hud = new GameUpdateDTO(0,0,false,["Please set game configuration above","","","",""]);
+    GameSummary? results = null;
+    Category selectedCategory;
+
+    // Reference for textbox
+    ElementReference textboxRef;
+    bool shouldFocusTextbox = false;
+
+    async Task StartGameButtonClick()
+    {
+        config = new GameConfig(selectedCategory, isBlindInputMode,gameDurationInSeconds);
+        List<string> phrases;
+
+        try { // Load phrases from file
+            using (var reader = new StreamReader(await Http.GetStreamAsync($"phrases/Phrases_{selectedCategory}.txt"))) {
+                phrases = new();
+                string? line;
+
+                while ((line = reader.ReadLine()) != null) {
+                    // If current line is not empty or white-space, add Line (.Trim to remove leading/trailing white-space) to list
+                    if (!string.IsNullOrWhiteSpace(line)) phrases.Add(line.Trim());
+                }
+            }
+        }
+        catch (Exception ex) {
+            errorMessage = $"Couldn't load phrases: {selectedCategory.GetDescription()}\n{ex.Message}";
+            return;
+        }
+
+        hud = Engine.InitializeGame(phrases, config);
+
+        // Disabled Start button and enable text box
+        isTextBoxDisabled = false;
+        isConfigDisabled = true;
+
+        // Focus text box
+        shouldFocusTextbox = true;
+        StateHasChanged();
+
+        // Set up timer; timer will actually start with text box's OnKeyDownEvent
+        StartGameRound();
+    }
+
+    // Helper function to focus textbox
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // only focus when requested and textbox is enabled
+        if (shouldFocusTextbox && !isTextBoxDisabled)
+        {
+            shouldFocusTextbox = false;
+            await Task.Yield();
+            await textboxRef.FocusAsync();
+        }
+    }
+
+    async Task OnKeyDownEvent(KeyboardEventArgs e)
+    {
+        //if (isPaused && _timer == null) StartGameRound(); //create and start timer when player starts typing at beginning of game
+        if (isPaused && e.Key != "Escape") ResumeTimer(); //unpause if paused
+        if (!isPaused && e.Key == "Escape") PauseTimer(); //pause w/escape key
+
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (string.IsNullOrWhiteSpace(userInput)) return; // if userInput is empty, do not submit anything
+
+            // Submit phrase
+            var submission = new PhraseSubmissionDTO(userInput, hud.NextPhrases[0], config.GameDurationSeconds - timeRemaining);
+            hud = Engine.SubmitEvent(submission);
+
+            // Flash textbox green/red based on correct/incorrect submission
+            ChangeTextboxColor();
+
+            // Clear textbox for next phrase
+            userInput = "";
+        }
+
+        // Look into adding the "Ctrl+Shift+Backspace" shortcut back to clear textbox
+    }
+
+    async void ChangeTextboxColor()
+    {
+        textboxCssClass = hud.IsPhraseCorrect == true ? "textbox correct" : "textbox incorrect"; // Set textbox class based on IsPhraseCorrect
+        await Task.Delay(200); // Leave textbox appropriate color for X msec
+        textboxCssClass = "textbox"; // Set textbox color back to default
+    }
+
+    #region Timer 
+    // Replace later with JS timer when implementing multiplayer. This is easiest for MVP to get something completed before project due date!
+    PeriodicTimer? _timer;
+    DateTime _endTimeUtc;
+    TimeSpan _timeRemainingAtPause;
+    double timeRemaining;
+    bool isPaused;
+
+    async Task StartGameRound()
+    {
+        isPaused = false;
+        timeRemaining = config.GameDurationSeconds;
+        _endTimeUtc = DateTime.UtcNow.AddSeconds(timeRemaining);
+        RestartTimer();
+        PauseTimer();
+    }
+
+    void RestartTimer()
+    {
+        isPaused = false;
+        _timer?.Dispose(); // stop any previous timer
+        _timer = new PeriodicTimer(TimeSpan.FromMilliseconds(100)); // tick timer every 100ms
+        _ = TimerTick(); // The sole _ intentionally discards the task's results. 
+    }
+
+    async Task TimerTick()
+    {
+        try
+        {
+            while(_timer != null && await _timer.WaitForNextTickAsync()) // check that timer exists and also wait for next tick to execute code block
+            {
+                var remaining = _endTimeUtc - DateTime.UtcNow; // temp variable for time remaining
+
+                if (remaining <= TimeSpan.Zero) // if time remaining is <= 0
+                    {
+                    timeRemaining = 0;
+                    StateHasChanged(); // rerender
+
+                    // Call end game from GameEngine
+                    results = Engine.Results();
+                    ShowOverlay();
+                    StateHasChanged();
+
+                    break;
+                }
+
+                timeRemaining = Math.Max(0,Math.Round(remaining.TotalSeconds, 1)); // Math.Max to avoid negatives just in case something happens and a negative gets through
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            // While doing research it was mentioned to use a try/catch to avoid an exception if the timer is disposed while waiting for the next tick (a "dispose race")
+        }
+    }
+
+    Task ResumeTimer()
+    {
+        if (isPaused)
+        {
+            isPaused = false;
+
+            // fix timer by adding the amount of time left at pause to calculated end time
+            _endTimeUtc = DateTime.UtcNow + _timeRemainingAtPause;
+
+            RestartTimer();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    Task PauseTimer()
+    {
+        if (!isPaused)
+        {
+            isPaused = true;
+
+            // determine how much time is remaining at pause
+            _timeRemainingAtPause = _endTimeUtc - DateTime.UtcNow;
+
+            _timer?.Dispose(); // stop timer (will require a new one on restart)
+            _timer = null;
+        }
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        // Safeguard using IDisposable to dispose of timer if user closes page
+        _timer?.Dispose();
+    }
+    #endregion
+}
+
+<style>
+    .config-setup {
+        display: flex;
+        justify-content: center;
+        font-size: 20px;
+        gap: 20px;
+    }
+
+    .hud {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .hud-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hud-header {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .hud-body {
+        font-size: 22px;
+    }
+
+    .game {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .phrase-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .phrase-label {
+        margin: 0;
+    }
+
+    .label1 {
+        font-size: 14px;
+        color: #E0E0E0;
+    }
+
+    .label2 {
+        font-size: 18px;
+        color: #ADADAD;
+    }
+
+    .label3 {
+        font-size: 22px;
+        color: #808080;
+    }
+    
+    .label4 {
+        font-size: 27px;
+        color: #525252;
+    }
+
+    .label5 {
+        font-size: 33px;
+        color: #0D0D0D;
+    }
+
+    .textbox {
+        font-size: 33px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .correct {
+        background-color: #B7FBB7 /* light green */
+    }
+
+    .incorrect {
+        background-color: #FBB7B7 /* light red */
+    }
+</style>
