@@ -5,5 +5,6 @@ namespace TypingGame.Core.Engine {
         public GameUpdateDTO InitializeGame(IReadOnlyList<string> phraseList, GameConfigDTO config);
         public GameUpdateDTO SubmitEvent(PhraseSubmissionDTO submission);
         public GameSummaryDTO Results(int playerID = 1);
+        public double GetGrossWPM(double elapsedSeconds, int playerID = 1);
     }
 }

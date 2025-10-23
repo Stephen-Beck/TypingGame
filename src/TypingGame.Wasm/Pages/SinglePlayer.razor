@@ -159,7 +159,7 @@
     </div>
     <div class="hud-section">
         <label class="hud-header">WPM</label>
-        <label class="hud-body">@hud.GrossWPM.ToString("N0")</label>
+        <label class="hud-body">@grossWPM.ToString("N0")</label>
     </div>
     <div class="hud-section">
         <label class="hud-header">Accuracy</label>
@@ -190,8 +190,8 @@
     <!-- Reformat this later on -->
     <br />
     <div class="hud-section">
-        <p>The game will pause whenever the text box loses focus or the 'Escape' key is pressed.</p>
-        <p>The game will start/resume once the player starts typing in the text box.</p>
+        <span>The game will pause whenever the text box loses focus or the 'Escape' key is pressed.</span>
+        <span>The game will start/resume once the player starts typing in the text box.</span>
     </div>
 </div>
 
@@ -216,6 +216,7 @@
     string userInput;
     GameConfigDTO? config = null;
     GameUpdateDTO hud = new GameUpdateDTO(0,0,false,["Please set game configuration above","","","",""]);
+    double grossWPM = 0;
     GameSummaryDTO? results = null;
     Category selectedCategory;
 
@@ -334,6 +335,8 @@
             while(_timer != null && await _timer.WaitForNextTickAsync()) // check that timer exists and also wait for next tick to execute code block
             {
                 var remaining = _endTimeUtc - DateTime.UtcNow; // temp variable for time remaining
+                var elapsedSeconds = config.GameDurationSeconds - timeRemaining; // temp variable for time elapsed
+                grossWPM = Engine.GetGrossWPM(elapsedSeconds);
 
                 if (remaining <= TimeSpan.Zero) // if time remaining is <= 0
                     {
