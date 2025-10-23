@@ -6,12 +6,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TypingGame.Core.DTO
-{
+namespace TypingGame.Core.Models {
     // Holds all of the user-selectable phrase categories
-    public enum Category { 
-        [Description("General")] General, 
-        [Description("C#")] CSharp, 
+    public enum Category {
+        [Description("General")] General,
+        [Description("C#")] CSharp,
         [Description("Single Words")] SingleWords
     }
 
@@ -32,8 +31,4 @@ namespace TypingGame.Core.DTO
             return enumValue.ToString();
         }
     }
-
-    // Holds all of the game configuration settings; only set once at the start of the game
-    // Default GameDurationSeconds to 60; this is here in case I want to implement user-selected test duration later on
-    public record GameConfig(Category Category, bool BlindInputMode, int GameDurationSeconds = 60);
 }

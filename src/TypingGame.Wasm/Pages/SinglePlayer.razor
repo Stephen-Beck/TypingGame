@@ -1,5 +1,6 @@
 ﻿@page "/"
 @implements IDisposable
+@inject GameSummaryState SummaryState
 @inject NavigationManager Nav
 @inject HttpClient Http
 @inject IGameEngine Engine
@@ -81,8 +82,19 @@
                 </tbody>
             </table>
             <button @onclick="RefreshPage">Play Again</button>
+            <button @onclick="LeaderboardsButtonClick">Go to Leaderboards</button>
         </div>
     </div>
+}
+
+@code {
+    void LeaderboardsButtonClick() => NavToLeaderboards(results);
+
+    void NavToLeaderboards(GameSummaryDTO results)
+    {
+        SummaryState.Set(results);
+        Nav.NavigateTo("/leaderboard");
+    }
 }
 
 <style>
@@ -202,9 +214,9 @@
     string? errorMessage;
     string textboxCssClass = "textbox";
     string userInput;
-    GameConfig? config = null;
+    GameConfigDTO? config = null;
     GameUpdateDTO hud = new GameUpdateDTO(0,0,false,["Please set game configuration above","","","",""]);
-    GameSummary? results = null;
+    GameSummaryDTO? results = null;
     Category selectedCategory;
 
     // Reference for textbox
@@ -213,11 +225,12 @@
 
     async Task StartGameButtonClick()
     {
-        config = new GameConfig(selectedCategory, isBlindInputMode,gameDurationInSeconds);
+        config = new GameConfigDTO(selectedCategory, isBlindInputMode,gameDurationInSeconds);
         List<string> phrases;
 
         try { // Load phrases from file
-            using (var reader = new StreamReader(await Http.GetStreamAsync($"phrases/Phrases_{selectedCategory}.txt"))) {
+            var phrasesURL = new Uri(new Uri(Nav.BaseUri), $"phrases/Phrases_{selectedCategory}.txt");
+            using (var reader = new StreamReader(await Http.GetStreamAsync(phrasesURL))) {
                 phrases = new();
                 string? line;
 

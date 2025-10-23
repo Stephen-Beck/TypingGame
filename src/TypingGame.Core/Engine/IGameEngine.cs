@@ -2,8 +2,8 @@
 
 namespace TypingGame.Core.Engine {
     public interface IGameEngine {
-        public GameUpdateDTO InitializeGame(IReadOnlyList<string> phraseList, GameConfig config);
+        public GameUpdateDTO InitializeGame(IReadOnlyList<string> phraseList, GameConfigDTO config);
         public GameUpdateDTO SubmitEvent(PhraseSubmissionDTO submission);
-        public GameSummary Results(int playerID = 1);
+        public GameSummaryDTO Results(int playerID = 1);
     }
 }

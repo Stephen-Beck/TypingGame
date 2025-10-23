@@ -16,8 +16,4 @@
     <ProjectReference Include="..\TypingGame.Core\TypingGame.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>
