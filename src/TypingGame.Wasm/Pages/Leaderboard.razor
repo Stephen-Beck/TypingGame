@@ -236,9 +236,15 @@
     }
 
     private async Task SaveButtonClick() {
-        // only runs if textbox input is valid (matches pattern and is not empty)
+        // Only runs if textbox input is valid (matches pattern and is not empty)
+
+        // Reset error variable
+        error = null;
+
+        // Set tempPartitionKey so we don't save to the wrong category
+        string tempPartitionKey = $"{lastGameResults.Config.Category}{(lastGameResults.Config.BlindInputMode ? " (Blind Input Mode)" : "")}";
         var entry = new LeaderboardEntryDTO {
-            Category = partitionKeyCategory,
+            Category = tempPartitionKey,
             Name = playerName,
             NetWPM = lastGameResults!.FinalNetWPM,
             Accuracy = lastGameResults.FinalAccuracy,
@@ -246,9 +252,22 @@
             Timestamp = lastGameResults.Timestamp
         };
 
-        await API.SubmitEntryAsync(entry);
+        // Try to save; if fail, put up error message
+        try {
+            await API.SubmitEntryAsync(entry);
+        }
+        catch (Exception ex) {
+            error = ex.Message;
+        }
+
+        // Disabled textbox and save button
         isEntrySubmitDisabled = true;
 
+        // Set leaderboard config to match lastGameResult
+        selectedCategory = lastGameResults.Config.Category;
+        isBlindInputMode = lastGameResults.Config.BlindInputMode;
+
+        // Reload leaderboards
         await LoadAsync();
     }
 

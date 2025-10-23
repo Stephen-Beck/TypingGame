@@ -100,7 +100,8 @@ namespace LeaderboardsAPI {
             return response;
         }
 
-
+        // GET /api/cosmos-ping
+        // Ping CosmosDB
         [Function("CosmosPing")]
         public async Task<HttpResponseData> CosmosPing(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "cosmos-ping")] HttpRequestData request) {
@@ -117,5 +118,14 @@ namespace LeaderboardsAPI {
             }
         }
 
+        // GET /api/ping
+        // Ping API
+        [Function("Ping")]
+        public static async Task<HttpResponseData> Ping(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")] HttpRequestData request) {
+            var response = request.CreateResponse(HttpStatusCode.OK);
+            await response.WriteStringAsync("pong");
+            return response;
+        }
     }
 }
