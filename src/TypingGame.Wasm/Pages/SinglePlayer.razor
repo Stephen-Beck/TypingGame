@@ -340,9 +340,11 @@
                     timeRemaining = 0;
                     StateHasChanged(); // rerender
 
-                    // Call end game from GameEngine
-                    results = Engine.Results();
-                    ShowOverlay();
+                    // End game
+                    results = Engine.Results(); // Get GameSummaryDTO
+                    isTextBoxDisabled = true; // Disable input textbox
+                    ShowOverlay(); // Show results overlay
+
                     StateHasChanged();
 
                     break;
