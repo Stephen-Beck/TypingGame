@@ -104,5 +104,12 @@ namespace TypingGame.Core.Engine {
 
             return gameSummary;
         }
+
+        public double GetGrossWPM(double elapsedSeconds, int playerID = 1) {
+            // Set current player object
+            SetCurrentPlayer(playerID);
+
+            return MetricsService.GrossWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalSubmissions, elapsedSeconds);
+        }
     }
 }
