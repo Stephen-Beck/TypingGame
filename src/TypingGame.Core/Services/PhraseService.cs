@@ -11,7 +11,6 @@
 
             // initialize PhraseArray
             for (int i = 0; i < 5; i++) {
-                //PhraseArray[i] = phraseQueue.Dequeue();
                 Next();
             }
         }

@@ -20,8 +20,8 @@ public class LeaderboardsApiClient : ILeaderboardAPI {
         throw new HttpRequestException($"Submit failed ({(int)resp.StatusCode}): {body}");
     }
 
-    public async Task<IReadOnlyList<LeaderboardEntryDTO>> GetEntriesByCategoryAsync(string category, int limit = 50, CancellationToken token = default) {
-        var path = $"api/leaderboards/{Uri.EscapeDataString(category)}?limit={limit}";
+    public async Task<IReadOnlyList<LeaderboardEntryDTO>> GetEntriesByCategoryAsync(string category, CancellationToken token = default) {
+        var path = $"api/leaderboards/{Uri.EscapeDataString(category)}";
         var list = await _http.GetFromJsonAsync<List<LeaderboardEntryDTO>>(path, cancellationToken: token);
         return list ?? new();
     }

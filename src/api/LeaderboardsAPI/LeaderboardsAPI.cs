@@ -8,7 +8,7 @@ using TypingGame.Core.DTO;
 
 namespace LeaderboardsAPI {
     public class LeaderboardsAPI {
-        private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web);
+        private static readonly JsonSerializerOptions options = new(JsonSerializerDefaults.Web);
         private readonly Container _container;
 
         public LeaderboardsAPI(IConfiguration config) {
@@ -26,24 +26,35 @@ namespace LeaderboardsAPI {
         [Function("CreateLeaderboardEntry")]
         public async Task<HttpResponseData> SubmitEntry(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leaderboards")] HttpRequestData request) {
-            LeaderboardEntryDTO? entry = await JsonSerializer.DeserializeAsync<LeaderboardEntryDTO>(request.Body, JsonOpts);
+            
+            // Deserialize the request JSON into a LeaderboardEntryDTO
+            LeaderboardEntryDTO? entry = await JsonSerializer.DeserializeAsync<LeaderboardEntryDTO>(request.Body, options);
+
+            // Validate required fields; if something is missing, mention it
             if (entry is null || string.IsNullOrWhiteSpace(entry.Category) || string.IsNullOrWhiteSpace(entry.Name)) {
                 var badRequest = request.CreateResponse(HttpStatusCode.BadRequest);
                 await badRequest.WriteStringAsync("Invalid body. Require Category, Name, NetWPM, Accuracy, GrossWPM, Timestamp.");
                 return badRequest;
             }
 
-            // ensure Cosmos-required bits
+            // Ensure the entry has an id for CosmosDB and generate one if it doesn't exist
             entry.id ??= Guid.NewGuid().ToString();
+
+            // If the timestamp is unspecified, it assumes it is UTC
             if (entry.Timestamp.Kind == DateTimeKind.Unspecified)
                 entry.Timestamp = DateTime.SpecifyKind(entry.Timestamp, DateTimeKind.Utc);
 
-            // POST create
+            // Attempt to create the item in CosmosDB; throw errors given by CosmosDB if it failed
             try {
+                // Create item in DB
                 var created = await _container.CreateItemAsync(entry, new PartitionKey(entry.Category));
+                
+                // Create a "created" HTTP response and add header to it
                 var response = request.CreateResponse(HttpStatusCode.Created);
                 response.Headers.Add("Content-Type", "application/json; charset=utf-8");
-                await response.WriteStringAsync(JsonSerializer.Serialize(created.Resource, JsonOpts));
+                
+                // Serialize the created resource and return it
+                await response.WriteStringAsync(JsonSerializer.Serialize(created.Resource, options));
                 return response;
             }
             catch (CosmosException ex) {
@@ -54,7 +65,7 @@ namespace LeaderboardsAPI {
                     substatus = ex.SubStatusCode,
                     activityId = ex.ActivityId
                 };
-                await errorResponse.WriteStringAsync(JsonSerializer.Serialize(errorDetails, JsonOpts));
+                await errorResponse.WriteStringAsync(JsonSerializer.Serialize(errorDetails, options));
                 return errorResponse;
             }
 
@@ -65,38 +76,42 @@ namespace LeaderboardsAPI {
         public async Task<HttpResponseData> GetEntriesByCategory(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboards/{category}")] HttpRequestData request,
     string category) {
+            
             // Server-side sort and trim (top 50) inside the partition
             var query = new QueryDefinition(@"
         SELECT TOP 50 *
         FROM c
         WHERE c.Category = @cat
         ORDER BY c.NetWPM DESC, c.Accuracy DESC, c.GrossWPM DESC, c.Timestamp ASC")
-                .WithParameter("@cat", category);
+                .WithParameter("@cat", category); // Bind the @cat parameter to the requested category
 
             var entries = new List<LeaderboardEntryDTO>();
 
             try {
+                // Iterate through all of the returned entries and add them to the entries list
                 using var iterator = _container.GetItemQueryIterator<LeaderboardEntryDTO>(
                     query,
                     requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(category) });
 
+                // Iterate through iterator pages until we have 50 entries
                 while (iterator.HasMoreResults && entries.Count < 50) {
                     var page = await iterator.ReadNextAsync();
                     entries.AddRange(page);
-
-                    // If a single page already satisfied TOP 50, we’ll exit on the loop condition.
                 }
             }
             catch (CosmosException ex) {
                 var errorResponse = request.CreateResponse((HttpStatusCode)ex.StatusCode);
                 var errorDetails = new { message = ex.Message, status = ex.StatusCode, substatus = ex.SubStatusCode, activityId = ex.ActivityId };
-                await errorResponse.WriteStringAsync(JsonSerializer.Serialize(errorDetails, JsonOpts));
+                await errorResponse.WriteStringAsync(JsonSerializer.Serialize(errorDetails, options));
                 return errorResponse;
             }
 
+            // Create a response with the results (entries list)
             var response = request.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "application/json; charset=utf-8");
-            await response.WriteStringAsync(JsonSerializer.Serialize(entries, JsonOpts));
+            
+            // Serialize the list of entries to the response body and return it
+            await response.WriteStringAsync(JsonSerializer.Serialize(entries, options));
             return response;
         }
 
