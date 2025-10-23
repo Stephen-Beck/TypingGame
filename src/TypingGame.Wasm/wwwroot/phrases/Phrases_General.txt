@@ -131,7 +131,6 @@ Microsoft Software and Systems Academy
 press Ctrl+Z to undo mistakes
 Use #hashtags wisely!
 use Ctrl+Backspace to delete the last word
-use Shift+Ctrl+Backspace to clear the input
 Press [Esc] to pause the game
 Press [Enter] to submit your input
 D'oh!
@@ -254,7 +253,7 @@ keep the change, ya filthy animal
 "I'm having an old friend for dinner."
 "You're killing me, Smalls!"
 Levenshtein distance algorithm
-Sphinx of black quarts, judge my vow
+Sphinx of black quartz, judge my vow
 Pack my box with five dozen liquor jugs
 Waltz, bad nymph, for quick jigs vex
 She sells seashells by the seashore
@@ -265,3 +264,5 @@ Better late than never
 Typing fast takes time and practice
 He quietly left the room without saying a word
 Reading books help expand your vocabulary
+How quickly daft jumping zebras vex!
+The five boxing wizards jump quickly.
