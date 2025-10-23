@@ -69,7 +69,6 @@ adverb
 advert
 advice
 advise
-aeneas
 affair
 affect
 affine
@@ -192,7 +191,7 @@ bandit
 bangle
 banish
 banter
-bapist
+baptist
 bardic
 barely
 bargain
@@ -430,7 +429,6 @@ carved
 carver
 cashed
 casket
-casped
 caster
 castle
 casual
@@ -558,7 +556,7 @@ comity
 commit
 common
 comply
-comrad
+comrade
 concur
 condor
 confab
@@ -775,7 +773,7 @@ domino
 donate
 dongle
 doodle
-dopple
+doppelganger
 dormant
 dormer
 dosage
@@ -1259,7 +1257,6 @@ jeeves
 jelly
 jerky
 jesting
-jetlag
 jigsaw
 jitter
 jockey
@@ -1394,7 +1391,6 @@ moment
 monkey
 motion
 motive
-nabble
 nachos
 nagging
 naked
@@ -1707,7 +1703,7 @@ signal
 silver
 singer
 slogan
-smokey
+smoking
 smooth
 softer
 sorrow
@@ -1990,7 +1986,7 @@ wetland
 whaler
 wheat
 whimper
-whippoor
+whisks
 whisper
 whiten
 whittle
