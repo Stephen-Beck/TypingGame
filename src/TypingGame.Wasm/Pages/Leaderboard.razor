@@ -242,7 +242,7 @@
         error = null;
 
         // Set tempPartitionKey so we don't save to the wrong category
-        string tempPartitionKey = $"{lastGameResults.Config.Category}{(lastGameResults.Config.BlindInputMode ? " (Blind Input Mode)" : "")}";
+        string tempPartitionKey = $"{lastGameResults.Config.Category.GetDescription()}{(lastGameResults.Config.BlindInputMode ? " (Blind Input Mode)" : "")}";
         var entry = new LeaderboardEntryDTO {
             Category = tempPartitionKey,
             Name = playerName,
@@ -258,6 +258,7 @@
         }
         catch (Exception ex) {
             error = ex.Message;
+            return; // Exit method if failed
         }
 
         // Disabled textbox and save button
