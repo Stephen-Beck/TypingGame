@@ -1,0 +1,256 @@
+﻿@page "/leaderboard"
+@inject NavigationManager Nav
+@inject LeaderboardsApiClient API
+@inject GameSummaryState SummaryState
+@using TypingGame.Core.Models
+
+
+
+<style>
+    .layout {
+        display: flex;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    /* Left panel (lastGameResults when exists) */
+    .left-panel { 
+        flex: 0 0 320px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .table {
+        border-collapse: collapse;
+    }
+
+    .table td {
+        border: none;
+    }
+
+    .table-header {
+        font-weight: bold;
+        text-align: right;
+        column-width: auto;
+    }
+
+    .table-body {
+        text-align: left;
+    }
+
+    .submit-form button {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .submit-form label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .submit-form .textbox {
+        flex: 1;
+        width: auto;
+        box-sizing: border-box;
+    }
+
+    /* Right panel (leaderboard) */
+    .right-panel { 
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .config-setup {
+        display: flex;
+        justify-content: center;
+        font-size: 20px;
+        gap: 20px;
+    }
+
+    .leaderboard {
+        width: 100%;
+    }
+
+    .leaderboard table {
+        width:100%;
+        max-width: 100%;
+        table-layout: fixed;
+    }
+    
+    /* Divider between panels */
+    .vertical-divider {
+        flex: 0 0 1px;
+        width: 1px;
+        background: #ddd;
+        align-self: stretch;
+    }
+</style>
+
+<div class="layout">
+    @if (lastGameResults != null) {
+        <aside class="left-panel">
+            <h4>Game Results!</h4>
+
+            <table class="table">
+                <tbody>
+                    <tr><td class="table-header">Category:</td><td class="table-body">@lastGameResults.Config.Category</td></tr>
+                    <tr><td class="table-header">Blind Input Mode:</td><td class="table-body">@(lastGameResults.Config.BlindInputMode ? "Enabled" : "Disabled")</td></tr>
+                    <tr><td class="table-header">Game Duration:</td><td class="table-body">@lastGameResults.Config.GameDurationSeconds</td></tr>
+                    <tr><td colspan="2"><hr /></td></tr>
+                    <tr><td class="table-header">Gross WPM:</td><td class="table-body">@lastGameResults.FinalGrossWPM.ToString("N0")</td></tr>
+                    <tr><td class="table-header">Net WPM:</td><td class="table-body">@lastGameResults.FinalNetWPM.ToString("N0")</td></tr>
+                    <tr><td class="table-header">Accuracy:</td><td class="table-body">@lastGameResults.FinalAccuracy.ToString("P0")</td></tr>
+                    <tr><td class="table-header">Total Errors:</td><td class="table-body">@lastGameResults.Stats.TotalErrors</td></tr>
+                    <tr><td class="table-header">Total Characters:</td><td class="table-body">@lastGameResults.Stats.TotalChars</td></tr>
+                    <tr><td class="table-header">Total Submissions:</td><td class="table-body">@lastGameResults.Stats.TotalSubmissions</td></tr>
+                </tbody>
+            </table>
+
+            <form class="submit-form" @onsubmit="SaveButtonClick" @onsubmit:preventDefault>
+                <label>Name: 
+                <input class="textbox"
+                       @bind-value="playerName"
+                       pattern="^[A-Za-z0-9]+$"
+                       title="Letters and numbers only"
+                       required
+                       maxlength="50"
+                       disabled="@isEntrySubmitDisabled"
+                           autocomplete="off" />
+                </label>
+
+                <button type="submit" disabled="@isEntrySubmitDisabled">Save to Leaderboards</button>
+            </form>
+
+            <button @onclick="PlayAgainButtonClick">Play Again</button>
+        </aside>
+
+        <div class="vertical-divider"></div>
+    }
+
+    <main class="right-panel">
+        <div class="config-setup">
+            <label>
+                <span title="Feature coming soon!">
+                    <input type="checkbox" @bind="isBlindInputMode" disabled="true" />
+                    Blind Input Mode <span>[?]</span>
+                </span>
+            </label>
+
+            <label>
+                <span>Category:</span>
+                <select @bind="selectedCategory">
+                    @foreach (var category in Enum.GetValues<Category>()) {
+                        <option value="@category">@category.GetDescription()</option>
+                    }
+                </select>
+            </label>
+
+            <button @onclick="ViewButtonClick" disabled="@isLoading">View Leaderboard</button>
+        </div>
+
+        <hr />
+
+        @if (!string.IsNullOrWhiteSpace(error)) {
+            <div class="alert alert-danger">@error</div>
+        }
+        else if (isLoading) {
+            <p>Loading…</p>
+        }
+        else if (leaderboardEntries.Count == 0) {
+            <p>No entries found.</p>
+        }
+
+        <div class="leaderboard">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Net WPM</th>
+                        <th>Accuracy</th>
+                        <th>Gross WPM</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in leaderboardEntries) {
+                        <tr>
+                            <td>@entry.Name</td>
+                            <td>@entry.NetWPM.ToString("N0")</td>
+                            <td>@entry.Accuracy.ToString("P1")</td>
+                            <td>@entry.GrossWPM.ToString("N0")</td>
+                            <td>@entry.Timestamp.ToLocalTime().ToString("g")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+@code {
+    string? partitionKeyCategory;
+    bool isBlindInputMode = false;
+    bool isLoading = false;
+    string? error;
+    List<LeaderboardEntryDTO> leaderboardEntries = new();
+    GameSummaryDTO? lastGameResults;
+    Category selectedCategory;
+
+    string playerName = string.Empty;
+    bool isEntrySubmitDisabled = false;
+
+    protected override async Task OnInitializedAsync() {
+        lastGameResults = SummaryState.GameSummary;
+
+        if (lastGameResults != null) {
+            selectedCategory = lastGameResults.Config.Category;
+            isBlindInputMode = lastGameResults.Config.BlindInputMode;
+        }
+
+        await LoadAsync();
+    }
+
+    private async Task ViewButtonClick() => await LoadAsync();
+
+    private async Task LoadAsync() {
+        isLoading = true;
+        error = null;
+        try {
+            partitionKeyCategory = $"{selectedCategory.GetDescription()}{(isBlindInputMode ? " (Blind Input Mode)" : "")}";
+            var data = await API.GetEntriesByCategoryAsync(partitionKeyCategory);
+            leaderboardEntries = data?.ToList() ?? new List<LeaderboardEntryDTO>();
+        }
+        catch (Exception ex) {
+            error = ex.Message;
+            leaderboardEntries.Clear();
+        }
+        finally {
+            isLoading = false;
+        }
+    }
+
+    private async Task SaveButtonClick() {
+        // only runs if textbox input is valid (matches pattern and is not empty)
+        var entry = new LeaderboardEntryDTO {
+            Category = partitionKeyCategory,
+            Name = playerName,
+            NetWPM = lastGameResults!.FinalNetWPM,
+            Accuracy = lastGameResults.FinalAccuracy,
+            GrossWPM = lastGameResults.FinalGrossWPM,
+            Timestamp = lastGameResults.Timestamp
+        };
+
+        await API.SubmitEntryAsync(entry);
+        isEntrySubmitDisabled = true;
+
+        await LoadAsync();
+    }
+
+    private void PlayAgainButtonClick() => Nav.NavigateTo("/", forceLoad: true);
+}

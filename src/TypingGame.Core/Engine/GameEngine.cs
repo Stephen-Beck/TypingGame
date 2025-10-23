@@ -6,7 +6,7 @@ namespace TypingGame.Core.Engine {
     // GameEngine holds all of the relevant information for the current game session (in WPMGameplayControl)
     public class GameEngine : IGameEngine {
         private readonly IPhraseService _phraseService;
-        GameConfig Config { get; set; }
+        GameConfigDTO Config { get; set; }
         PlayerStats? CurrentPlayer { get; set; }
         PlayerStats? Player1 { get; set; }
         PlayerStats? Player2 { get; set; }
@@ -15,7 +15,7 @@ namespace TypingGame.Core.Engine {
             _phraseService = phraseService;
         }
 
-        public GameUpdateDTO InitializeGame(IReadOnlyList<string> phraseList, GameConfig config) {
+        public GameUpdateDTO InitializeGame(IReadOnlyList<string> phraseList, GameConfigDTO config) {
             // Initialize phrases            
             _phraseService.InitializePhrases(phraseList);
 
@@ -53,8 +53,8 @@ namespace TypingGame.Core.Engine {
             // Calculate values required for GameUpdateDTO
             // SubmitPhrase needs to be called first to accurately set TotalChars/TotalErrors/TotalSubmissions properties
             bool isPhraseCorrect = SubmitPhrase(submission.userInput, submission.currentPhrase);
-            double grossWPM = MetricsCalculator.GrossWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalSubmissions, submission.elapsedTimeInSeconds);
-            double accuracyPercent = MetricsCalculator.Accuracy(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors);
+            double grossWPM = MetricsService.GrossWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalSubmissions, submission.elapsedTimeInSeconds);
+            double accuracyPercent = MetricsService.Accuracy(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors);
             _phraseService.Next();
 
             // Create GameUpdateDTO and return it
@@ -79,7 +79,7 @@ namespace TypingGame.Core.Engine {
             // If userInput and currentPhrase are different, calculate errors; otherwise, skip to increase performance
             if (userInput != currentPhrase) {
                 // Count number of errors in submission
-                int phraseErrors = MetricsCalculator.CountErrors(userInput, currentPhrase);
+                int phraseErrors = MetricsService.CountErrors(userInput, currentPhrase);
 
                 // Bookkeeping for TotalErrors in PlayerStats
                 CurrentPlayer.TotalErrors += phraseErrors;
@@ -88,17 +88,17 @@ namespace TypingGame.Core.Engine {
             return userInput == currentPhrase;
         }
 
-        public GameSummary Results(int playerID = 1) {
+        public GameSummaryDTO Results(int playerID = 1) {
             // Set current player object
             SetCurrentPlayer(playerID);
 
             // Create GameSummary and return it        
-            var gameSummary = new GameSummary(
+            var gameSummary = new GameSummaryDTO(
                 Stats: CurrentPlayer,
                 Config: Config,
-                FinalGrossWPM: MetricsCalculator.GrossWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalSubmissions, Config.GameDurationSeconds),
-                FinalNetWPM: MetricsCalculator.NetWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors, CurrentPlayer.TotalSubmissions, Config.GameDurationSeconds),
-                FinalAccuracy: MetricsCalculator.Accuracy(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors),
+                FinalGrossWPM: MetricsService.GrossWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalSubmissions, Config.GameDurationSeconds),
+                FinalNetWPM: MetricsService.NetWPM(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors, CurrentPlayer.TotalSubmissions, Config.GameDurationSeconds),
+                FinalAccuracy: MetricsService.Accuracy(CurrentPlayer.TotalChars, CurrentPlayer.TotalErrors),
                 Timestamp: DateTime.UtcNow
                 );
 

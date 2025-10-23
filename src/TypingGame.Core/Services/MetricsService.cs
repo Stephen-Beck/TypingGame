@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TypingGame.Core.Engine {
+namespace TypingGame.Core.Services {
     // Metrics handles all of the calculations
-    public static class MetricsCalculator {
+    public static class MetricsService {
         
         // NOTE: Each phrase submission is treated as one extra character to approximate spaces between words used by paragraph-based WPM calculators
         public static double NetWPM(int totalChars, int totalErrors, int submissions, double elapsedSeconds) {
@@ -39,7 +39,7 @@ namespace TypingGame.Core.Engine {
             for (int i = 1; i <= input.Length; i++) {
                 for (int j = 1; j <= phrase.Length; j++) {
                     // If the characters are the same, cost = 0, else cost = 1
-                    int cost = (input[i - 1] == phrase[j - 1]) ? 0 : 1;
+                    int cost = input[i - 1] == phrase[j - 1] ? 0 : 1;
 
                     // Choose the "cheapest" option
                     compare[i, j] = Math.Min(Math.Min(
@@ -57,7 +57,7 @@ namespace TypingGame.Core.Engine {
             if (totalChars == 0) return 0;
             
             // Return accuracy; clamp between 0 (0%) and 1 (100%) just in case
-            return Math.Clamp(1 - ((double)totalErrors / totalChars),0,1);
+            return Math.Clamp(1 - (double)totalErrors / totalChars,0,1);
         }
     }
 }
