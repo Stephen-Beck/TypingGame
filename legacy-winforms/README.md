@@ -69,11 +69,11 @@ This project helped me apply a wide range of software development skills:
 
 ## Screenshots
 ### Configuration Screen
-![Config](legacy-winforms/Screenshots/WPMCalc_Config.png)
+![Config](Screenshots/WPMCalc_Config.png)
 ### Gameplay Screen
-![Gameplay](legacy-winforms/Screenshots/WPMCalc_Gameplay.png)
+![Gameplay](Screenshots/WPMCalc_Gameplay.png)
 ### Results Screen
-![Results](legacy-winforms/Screenshots/WPMCalc_Results.png)
+![Results](Screenshots/WPMCalc_Results.png)
 
 ---
 
