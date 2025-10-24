@@ -48,7 +48,7 @@ Unlike most typing tests, this game treats **Enter submissions as characters** w
 
 ## Future Improvements
 - Possible **multiplayer racing mode** (long-term goal): online PVP-style WPM calculator.
-- Posisble **time attack mode**: Errors will reduce time slightly, submissions will increase it slightly.
+- Possible **time attack mode**: Errors will reduce time slightly, submissions will increase it slightly.
 - **Online leaderboards**, potentially hosted on **Azure** or backed by an SQL database.  
 - Migration to a **Blazor web app**.  
 - Possible **“Story” category**, where players type through passages from open-source or preloaded AI-generated stories.  
@@ -61,7 +61,7 @@ Unlike most typing tests, this game treats **Enter submissions as characters** w
 This project helped me apply a wide range of software development skills:  
 - Applying **clear separation of concerns** between UI and game logic, though there are still a few areas that could be improved.  
 - Applying **object-oriented game design** principles.  
-- Saving/loading leaderboard **timestamps in UTC** and converting them to the player’s local timezone for display.  
+- Saving/loading leaderboard **timestamps in UTC** and converting them to the player’s local time zone for display.  
 - Creating and using **custom events** (`ExitToConfigMenuRequested`, `PlayAgainRequested`) to handle screen transitions in the `ScreenManager`.  
 - Implementing JSON persistence, LINQ sorting, and custom input handling for better UX.  
 
