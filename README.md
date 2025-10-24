@@ -129,7 +129,7 @@ Unlike most typing tests, this game treats **Enter submissions as characters** w
 ### Gameplay Results
 ![Gameplay](Screenshots/Blazor_Results_20251024.png)
 ### Leaderboards
-![Results](Screenshots/Blazor_Leaderboards_20251024.png)
+![Results](Screenshots/Blazor_Leaderboard_20251024.png)
 
 ---
 
