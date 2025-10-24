@@ -9,20 +9,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
 // Connect API
 // Determine which base URL to use for the API
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? builder.HostEnvironment.BaseAddress; // If "ApiBaseUrl" doesn't exist, use BaseAddress
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl.TrimEnd('/') + "/") });
-
-//builder.Services.AddScoped(_ => {
-//    var httpClient = new HttpClient {
-//        BaseAddress = new Uri(apiBaseUrl.TrimEnd('/') + "/")
-//    };
-//    return httpClient;
-//});
 
 builder.Services.AddScoped<LeaderboardsApiClient>();
 
