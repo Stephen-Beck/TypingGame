@@ -2,7 +2,7 @@
 
 A browser-based typing practice game rewritten in **Blazor WebAssembly (.NET 9)** and deployed to **Azure Static Web Apps** with an **Azure Functions** API and **Cosmos DB (NoSQL)**–backed leaderboards.
 
-**Live site:** https://white-grass-06ee43b0f.3.azurestaticapps.net/
+**Live site:** \<temporarily down>
 
 ---
 
